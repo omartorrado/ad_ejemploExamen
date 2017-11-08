@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 public class SqlManager {
 
     public static Connection conexion = null;
-    public PreparedStatement pst;
     //para recorrer todas las filas hacer un for de i<analisis.lenght
     public String[][] analisis = new String[4][];
 
@@ -60,28 +59,22 @@ public class SqlManager {
 
     public void insertarAnalisis(String[] analisis) {
         try {
-            pst = conexion.prepareStatement("insert into xerado(num,nomeuva,tratacidez,total) values(?,?,?,?)");
+            PreparedStatement pst = conexion.prepareStatement("insert into xerado(num,nomeuva,tratacidez,total) values(?,?,?,?)");
             //leemos el codigo del analisis
             pst.setString(1, analisis[0]);
             //leemos en la tabla uvas el nombre de la uva segun el codigo de uva del analisis
             pst.setString(2, nombreUva(analisis[4]));
             //leer de la tabla los valores de acidez de la uva en base a tratacidez para meter luego en xerado subir/bajar/correcta segun corresponda
-            System.out.println(comprobarAcidez(analisis[4], Integer.parseInt(analisis[1])));
+            //System.out.println(comprobarAcidez(analisis[4], Integer.parseInt(analisis[1])));
             pst.setString(3, comprobarAcidez(analisis[4], Integer.parseInt(analisis[1])));
             //leemos la cantidad del analisis y la multipicamos por 15
-            System.out.println("Tu madre");
             pst.setInt(4, (Integer.parseInt(analisis[5]) * 15));
             //ejecutamos el statement
-            System.out.println("hijo de puta");
             pst.executeUpdate();
-            System.out.println("JODEEEEEEEEER");
             //Falta aumentar el numero de analisis en base al dni, hay que hacer un nuevo statement
             pst=conexion.prepareStatement("update clientes set numerodeanalisis+=? where dni=?");
-
             pst.setInt(1, 1);
-
             pst.setString(2,analisis[6]);
-
             pst.executeUpdate();
             conexion.commit();
         } catch (SQLException ex) {
@@ -93,7 +86,7 @@ public class SqlManager {
     public String nombreUva(String codUva) {
         String nomeUva = null;
         try {
-            pst = conexion.prepareStatement("select nomeu from uvas where tipo='" + codUva + "'");
+            PreparedStatement pst = conexion.prepareStatement("select nomeu from uvas where tipo='" + codUva + "'");
             ResultSet rs = pst.executeQuery();
             rs.next();
             nomeUva=rs.getString("nomeu");
@@ -109,7 +102,7 @@ public class SqlManager {
         int acidezMin;
         int acidezMax;
         try {
-            pst = conexion.prepareStatement("select acidezmin,acidezmax from uvas where tipo='" + codUva + "'");
+            PreparedStatement pst = conexion.prepareStatement("select acidezmin,acidezmax from uvas where tipo='" + codUva + "'");
             ResultSet rs = pst.executeQuery();
             rs.next();
             acidezMin = Integer.parseInt(rs.getString("acidezmin"));
