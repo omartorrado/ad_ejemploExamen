@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +33,7 @@ public class SqlManager {
         }
 
     }
-    
+
     public void closeConexion() {
         try {
             conexion.close();
@@ -40,13 +41,13 @@ public class SqlManager {
             Logger.getLogger(SqlManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void leerFichero(String ruta){
+
+    public void leerFichero(String ruta) {
         try {
-            BufferedReader bf=new BufferedReader(new FileReader(ruta));
-            int i=0;
-            while(bf.ready()){
-                analisis[i]=bf.readLine().split(",");
+            BufferedReader bf = new BufferedReader(new FileReader(ruta));
+            int i = 0;
+            while (bf.ready()) {
+                analisis[i] = bf.readLine().split(",");
                 i++;
             }
         } catch (FileNotFoundException ex) {
@@ -54,7 +55,7 @@ public class SqlManager {
         } catch (IOException ex) {
             Logger.getLogger(SqlManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     public void insertarAnalisis(String[] analisis) {
@@ -72,10 +73,8 @@ public class SqlManager {
             //ejecutamos el statement
             pst.executeUpdate();
             //Falta aumentar el numero de analisis en base al dni, hay que hacer un nuevo statement
-            pst=conexion.prepareStatement("update clientes set numerodeanalisis+=? where dni=?");
-            pst.setInt(1, 1);
-            pst.setString(2,analisis[6]);
-            pst.executeUpdate();
+            Statement st = conexion.createStatement();
+            st.executeUpdate("update clientes set numerodeanalisis=(numerodeanalisis+1) where dni='" + analisis[6] + "'");
             conexion.commit();
         } catch (SQLException ex) {
             System.out.println("Falla insertar");
@@ -89,7 +88,7 @@ public class SqlManager {
             PreparedStatement pst = conexion.prepareStatement("select nomeu from uvas where tipo='" + codUva + "'");
             ResultSet rs = pst.executeQuery();
             rs.next();
-            nomeUva=rs.getString("nomeu");
+            nomeUva = rs.getString("nomeu");
         } catch (SQLException ex) {
             Logger.getLogger(SqlManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -116,7 +115,7 @@ public class SqlManager {
             }
         } catch (SQLException ex) {
             Logger.getLogger(SqlManager.class.getName()).log(Level.SEVERE, null, ex);
-        }    
+        }
         return trataAcidez;
 
     }

@@ -19,17 +19,12 @@ public class Ad_EjemploExamen {
 
         c.getConexion();
         c.leerFichero("/home/oracle/Downloads/analisis.txt");
-//            for(String[] s:c.analisis){
-//                for(String st:s){
-//                    System.out.println(st);
-//                }
-//            }
-        for (int i = 0; i < c.analisis.length; i++) {
-            c.insertarAnalisis(c.analisis[i]);
-            //System.out.println(c.analisis[i][6]);
+//
+        for (String[] analisi : c.analisis) {
+            c.insertarAnalisis(analisi);
         }
         c.closeConexion();
-        System.out.println(c.comprobarAcidez("c", 6));
+       
     }
 
 }
